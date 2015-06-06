@@ -27,7 +27,7 @@ public class DockerFacetImplTest
 {
    @Deployment
    @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:DockerAddon"),
+            @AddonDeployment(name = "org.jboss.forge.addon:docker-addon"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven"),
             @AddonDeployment(name = "org.jboss.forge.addon:projects"),
@@ -44,7 +44,7 @@ public class DockerFacetImplTest
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:DockerAddon"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:docker-addon"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources")
 
@@ -66,17 +66,17 @@ public class DockerFacetImplTest
       Project project = projectFactory.createTempProject();
       DockerFacet dockerFacet = facetFactory.install(project, DockerFacet.class);
       Assert.assertTrue((dockerFacet.isInstalled()));
-      DockerFileResource dockerfileResource = dockerFacet.getDockerfile();
+      DockerFileResource dockerfileResource = dockerFacet.getDockerfileResource();
       Assert.assertEquals("#Dockerfile for your project", dockerfileResource.getContents());
       
 
-      File f = File.createTempFile("dockerfile", "");
+      File f = File.createTempFile("Dockerfile", "");
       @SuppressWarnings("unchecked")
       FileResource<?> resource = rf.create(FileResource.class, f);
       resource.setContents("#new Dockerfile");
       dockerFacet.setDockerfile(resource.getUnderlyingResourceObject());
-      dockerfileResource = dockerFacet.getDockerfile();
-      Assert.assertEquals("#new Dockerfile", dockerFacet.getDockerfile().getContents());
+      dockerfileResource = dockerFacet.getDockerfileResource();
+      Assert.assertEquals("#new Dockerfile", dockerFacet.getDockerfileResource().getContents());
       
    }
 

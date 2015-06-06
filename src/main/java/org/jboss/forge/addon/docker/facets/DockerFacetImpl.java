@@ -3,6 +3,8 @@ package org.jboss.forge.addon.docker.facets;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.jboss.forge.addon.docker.resource.DockerFileResource;
 import org.jboss.forge.addon.facets.AbstractFacet;
@@ -29,7 +31,7 @@ public class DockerFacetImpl extends AbstractFacet<Project> implements DockerFac
    }
 
    @Override
-   public DockerFileResource getDockerfile()
+   public DockerFileResource getDockerfileResource()
    {
 
       return getFaceted().getRoot().getChild("Dockerfile").reify(DockerFileResource.class);
@@ -42,22 +44,32 @@ public class DockerFacetImpl extends AbstractFacet<Project> implements DockerFac
       DockerFileResource dockerfile = getFaceted().getRoot().getChild("Dockerfile")
                .reify(DockerFileResource.class);
 
+      InputStream is = null;
       try
       {
-         dockerfile.setContents(new FileInputStream(file));
+         is = new FileInputStream(file);
       }
-      catch (FileNotFoundException e)
+      catch (FileNotFoundException e1)
+      {
+      }
+      dockerfile.setContents(is);
+
+      try
+      {
+         is.close();
+      }
+      catch (IOException e)
       {
       }
 
    }
 
-   public void setDockerFile(DockerFileResource drf)
+   public void setDockerFileResource(DockerFileResource dockerFileResource)
    {
       DockerFileResource dockerfile = getFaceted().getRoot().getChild("Dockerfile")
                .reify(DockerFileResource.class);
 
-      dockerfile.setContents(drf.getContents());
+      dockerfile.setContents(dockerFileResource.getContents());
 
    }
 

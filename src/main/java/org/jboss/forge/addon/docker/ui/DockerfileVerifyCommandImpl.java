@@ -27,7 +27,7 @@ public class DockerfileVerifyCommandImpl extends AbstractUICommand implements Do
 
    @Inject
    @WithAttributes(label = "Rule File", description = "The rule file against which the dockerfile should be verified")
-   private UISelectOne<FileResource<?>> ruleFile;
+   private UISelectOne<FileResource<?>> rulefile;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -51,14 +51,14 @@ public class DockerfileVerifyCommandImpl extends AbstractUICommand implements Do
       if (dockerfile.getValue().getResourceInputStream() == null)
          return Results.fail("Couldnot parse the dockerfile");
 
-      if ((ruleFile.getValue() != null) && (!ruleFile.getValue().exists()))
+      if ((rulefile.getValue() != null) && (!rulefile.getValue().exists()))
          return Results.fail("Rulefile not found");
 
-      if (ruleFile.getValue() == null)
+      if (rulefile.getValue() == null)
          result = imp.verify(dockerfile.getValue());
 
       else
-         result = imp.verify(dockerfile.getValue(), ruleFile.getValue());
+         result = imp.verify(dockerfile.getValue(), rulefile.getValue());
 
       return Results.success("Lint Results: \n" + result.toString());
    }
@@ -66,6 +66,6 @@ public class DockerfileVerifyCommandImpl extends AbstractUICommand implements Do
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(dockerfile).add(ruleFile);
+      builder.add(dockerfile).add(rulefile);
    }
 }

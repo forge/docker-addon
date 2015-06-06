@@ -30,7 +30,7 @@ public class DockerfileVerifyCommandImplTest
 {
    @Deployment
    @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:DockerAddon"),
+            @AddonDeployment(name = "org.jboss.forge.addon:docker-addon"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven"),
             @AddonDeployment(name = "org.jboss.forge.addon:projects"),
@@ -53,7 +53,7 @@ public class DockerfileVerifyCommandImplTest
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:DockerAddon"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:docker-addon"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources")
 
@@ -94,7 +94,7 @@ public class DockerfileVerifyCommandImplTest
 
       commandController.initialize();
       commandController.setValueFor("dockerfile", dockerfileResource);
-      commandController.setValueFor("ruleFile", ruleFile);
+      commandController.setValueFor("rulefile", ruleFile);
       Result result = commandController.execute();
       Assert.assertFalse(result instanceof Failed);
       Assert.assertEquals(

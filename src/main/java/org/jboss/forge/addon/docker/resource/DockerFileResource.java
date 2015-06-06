@@ -13,8 +13,6 @@ public interface DockerFileResource extends FileResource<DockerFileResource>
 
    DockerDescriptor getDockerDescriptor();
 
-  // DockerFileResource setContents(DockerFileResource resource);
-
    DockerFileResource setContents(DockerDescriptor descriptor);
 
 }

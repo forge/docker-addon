@@ -62,10 +62,4 @@ public class DockerFileResourceImpl extends AbstractFileResource<DockerFileResou
       return this;
    }
 
-//   @Override
-//   public DockerFileResource setContents(DockerFileResource resource)
-//   {
-//      return setContents(resource.getContents());
-//   }
-
 }

@@ -1,3 +1,44 @@
-Docker Addon For Jboss Forge.
-Addon Under Development.Not for use yet.
-Known Issues : DockerFacetImplTest may fail.
+### Docker Addon for JBoss Forge 2.
+:idprefix: id_ 
+
+image:https://travis-ci.org/forge/docker-addon.svg?branch=master["Build Status", link="https://travis-ci.org/forge/docker-addon"]
+
+The *Docker Addon* provides support for Docker technologies in Forge projects.This addon *exports services* for use in other addons.
+
+=== Installation
+
+From Forge CLI:
+
+[source,shell]
+----
+addon-install-from-git --url https://github.com/D9110/docker-addon.git
+----
+
+== Features
+* Dockerfile Linter: A rule based 'linter' for https://docs.docker.com/reference/builder/[Dockerfiles] .The linter rules can be used  to check file syntax as well as arbitrary semantic and best practice attributes determined by the rule file writer.
+Rule files are written in YAML. The rules are implemented using regular expressions, run on one instruction of the Dockerfile at a time.
+
+
+* Dockerfile-Verify command: 
+Just type the following command if you're in shell.It will run the Dockerfile linter on the input Dockerfile using the Rulefile. 
++
+[source,java]
+----
+dockerfile-verify —-dockerfile [Dockerfile] —-rulefile [Rulefile]
+----
++
+
+* DockerfileResource for Dockerfiles: 
+The Docker Addon has to provide APIs and services for interacting with real and virtual Dockerfile Resources, typically for the purpose of reading and manipulating Dockerfiles. 
+The addon uses https://github.com/shrinkwrap/descriptors-docker[Shrinkwrap Descriptors Docker], that provide reading,parsing,manipulating
+and writing Dockerfile commands to real and virtual Dockerfile resources provided by the addon.
++
+[source,java]
+----
+@Inject private ResourceFactory factory;
+DockerFileResource resource = factory.createResource(new File(“Dockerfile”)).reify(DockerFileResource.class);
+DockerDescriptor resourceDescriptor = resource.getDockerDescriptor();
+----
++
+* Facets implementation:
+Docker addon adds a `DockerFacet` which is entry point for Docker addon API.

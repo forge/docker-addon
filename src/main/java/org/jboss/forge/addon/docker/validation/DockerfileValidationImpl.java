@@ -34,13 +34,27 @@ public class DockerfileValidationImpl
    }
 
    @SuppressWarnings("unchecked")
-   public FileResource<?> getBaseRules() throws IOException
+   public FileResource<?> getBaseRules()
    {
       InputStream ist = getClass().getResourceAsStream("base_rules.yaml");
-      File file = File.createTempFile("fileresourcetest", ".yaml");
+      File file = null;
+      try
+      {
+         file = File.createTempFile("fileresourcetest", ".yaml");
+      }
+      catch (IOException e1)
+      {
+      }
       file.deleteOnExit();
       FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
       fileResource.setContents(ist);
+      try
+      {
+         ist.close();
+      }
+      catch (IOException e)
+      {
+      }
       return fileResource;
    }
 
@@ -54,13 +68,7 @@ public class DockerfileValidationImpl
    {
       if (baseRuleFile == null)
       {
-         try
-         {
-            baseRuleFile = getBaseRules();
-         }
-         catch (IOException e)
-         {
-         }
+         baseRuleFile = getBaseRules();
       }
 
       InputStream bis = baseRuleFile.getResourceInputStream();
@@ -75,6 +83,13 @@ public class DockerfileValidationImpl
          Yaml yaml = new Yaml();
          @SuppressWarnings("unchecked")
          Map<String, Object> ruleFileObject = (Map<String, Object>) yaml.load(is);
+         try
+         {
+            is.close();
+         }
+         catch (IOException e)
+         {
+         }
          object = getCombinedRules(ruleFileObject, baseRuleFileObject);
       }
 

@@ -27,7 +27,6 @@ public class DockerFileResourceGenerator implements ResourceGenerator<DockerFile
    @Override
    public boolean handles(Class<?> type, Object resource)
    {
-      // TODO Add check for dockerfile
       if (resource instanceof File)
       {
          return true;

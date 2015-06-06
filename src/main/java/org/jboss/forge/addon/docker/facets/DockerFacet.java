@@ -7,7 +7,10 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 
 public interface DockerFacet extends ProjectFacet
 {
-   DockerFileResource getDockerfile();
+   DockerFileResource getDockerfileResource();
 
    void setDockerfile(File dockerfile);
+   
+   void setDockerFileResource(DockerFileResource dockerFileresource);
+    
 }
