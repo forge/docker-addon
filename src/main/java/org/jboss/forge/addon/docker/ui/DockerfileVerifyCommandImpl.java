@@ -18,6 +18,11 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
+/**
+ * Implementation of the "dockerfile-verify" command.Lints Dockerfiles against specified rules written in YAML.
+ * 
+ * @author <a href="mailto:devanshu911@gmail.com">Devanshu Singh</a>
+ */
 public class DockerfileVerifyCommandImpl extends AbstractUICommand implements DockerfileVerifyCommand
 {
 
@@ -36,7 +41,7 @@ public class DockerfileVerifyCommandImpl extends AbstractUICommand implements Do
                .description("Dockerfile Linter")
                .category(Categories.create("Docker"));
    }
-   
+
    @Inject
    DockerfileValidationImpl imp;
 
