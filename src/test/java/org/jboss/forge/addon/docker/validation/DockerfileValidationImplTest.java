@@ -40,7 +40,7 @@ public class DockerfileValidationImplTest
                .create(AddonArchive.class)
                .addBeansXML()
                .add(new FileAsset(new File(
-                        "src/test/resources/org/jboss/forge/addon/docker/validation/dockerfile")),
+                        "src/test/resources/org/jboss/forge/addon/docker/validation/Dockerfile")),
                         "org/jboss/forge/addon/docker/validation/Dockerfile")
                .add(new FileAsset(new File(
                         "src/test/resources/org/jboss/forge/addon/docker/validation/default_rules.yaml")),

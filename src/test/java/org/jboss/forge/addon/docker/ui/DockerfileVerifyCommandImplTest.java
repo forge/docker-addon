@@ -44,7 +44,7 @@ public class DockerfileVerifyCommandImplTest
                .create(AddonArchive.class)
                .addBeansXML()
                .add(new FileAsset(new File(
-                        "src/test/resources/org/jboss/forge/addon/docker/ui/dockerfile")),
+                        "src/test/resources/org/jboss/forge/addon/docker/ui/Dockerfile")),
                         "org/jboss/forge/addon/docker/ui/Dockerfile")
                .add(new FileAsset(new File(
                         "src/test/resources/org/jboss/forge/addon/docker/ui/default_rules.yaml")),
