@@ -7,7 +7,6 @@ import java.util.List;
 import org.jboss.forge.addon.docker.validation.DockerfileValidationImpl;
 import org.jboss.forge.addon.docker.validation.DockerfileValidationResult;
 import org.jboss.forge.addon.resource.AbstractFileResource;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
@@ -41,7 +40,7 @@ public class DockerFileResourceImpl extends AbstractFileResource<DockerFileResou
       return new DockerfileValidationImpl().verify(this);
    }
 
-   public DockerfileValidationResult verify(FileResource<?> ruleFile)
+   public DockerfileValidationResult verify(Resource<?> ruleFile)
    {
       return new DockerfileValidationImpl().verify(this, ruleFile);
    }

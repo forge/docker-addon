@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.docker.resource.DockerFileResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.yaml.snakeyaml.Yaml;
 
@@ -63,7 +64,7 @@ public class DockerfileValidationImpl
       return verify(dockerfile, null);
    }
 
-   public DockerfileValidationResult verify(DockerFileResource dockerfile, FileResource<?> ruleFile)
+   public DockerfileValidationResult verify(DockerFileResource dockerfile, Resource<?> ruleFile)
 
    {
       if (baseRuleFile == null)
