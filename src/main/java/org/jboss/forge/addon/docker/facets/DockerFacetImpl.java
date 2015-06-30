@@ -11,7 +11,7 @@ import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 
-public class DockerFacetImpl extends AbstractFacet<Project> implements DockerFacet
+class DockerFacetImpl extends AbstractFacet<Project> implements DockerFacet
 {
 
    @Override

@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.docker.validation;
 
-public class DockerfileLineValidationResult
+class DockerfileLineValidationResult
 {
 
    private final DockerfileValidationResultType type;

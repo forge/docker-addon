@@ -13,7 +13,7 @@ import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.docker.DockerDescriptor;
 
-public class DockerFileResourceImpl extends AbstractFileResource<DockerFileResource> implements DockerFileResource
+class DockerFileResourceImpl extends AbstractFileResource<DockerFileResource> implements DockerFileResource
 {
 
    public DockerFileResourceImpl(ResourceFactory factory, File file)
