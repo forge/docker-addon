@@ -16,47 +16,42 @@ public class DockerfileValidationResult
       return result;
    }
 
-   void addValidationResult(String type, String message, String line, Integer lineNumber)
+   public void addValidationResult(String type, String message, String line, Integer lineNumber)
    {
 
-      if (type.equals("error"))
+      if (type.toUpperCase().equals("ERROR"))
       {
          addError(message, line, lineNumber);
       }
-      else if (type.equals("warn"))
+      else if (type.toUpperCase().equals("WARN"))
       {
          addWarn(message, line, lineNumber);
       }
-      else if (type.equals("info"))
+      else if (type.toUpperCase().equals("INFO"))
       {
          addInfo(message, line, lineNumber);
       }
-      else
-      {
-         result.add(new DockerfileLineValidationResult(DockerfileValidationResultType.valueOf(type), message, line,
-                  lineNumber));
-      }
 
    }
 
-   void addError(String message, String line, Integer lineNumber)
+   public void addError(String message, String line, Integer lineNumber)
    {
       errors++;
-      result.add(new DockerfileLineValidationResult(DockerfileValidationResultType.error, message, line, lineNumber));
+      result.add(new DockerfileLineValidationResult(DockerfileValidationResultType.ERROR, message, line, lineNumber));
 
    }
 
-   void addWarn(String message, String line, Integer lineNumber)
+   public void addWarn(String message, String line, Integer lineNumber)
    {
       warn++;
-      result.add(new DockerfileLineValidationResult(DockerfileValidationResultType.warn, message, line, lineNumber));
+      result.add(new DockerfileLineValidationResult(DockerfileValidationResultType.WARN, message, line, lineNumber));
 
    }
 
-   void addInfo(String message, String line, Integer lineNumber)
+   public void addInfo(String message, String line, Integer lineNumber)
    {
       info++;
-      result.add(new DockerfileLineValidationResult(DockerfileValidationResultType.info, message, line, lineNumber));
+      result.add(new DockerfileLineValidationResult(DockerfileValidationResultType.INFO, message, line, lineNumber));
 
    }
 

@@ -99,7 +99,7 @@ public class DockerfileVerifyCommandImplTest
       Assert.assertFalse(result instanceof Failed);
       Assert.assertEquals(
                result.getMessage(),
-               "Lint Results: \nValidation Results\nErrors: 0\nWarn: 1\nInfo: 2\n\nType: info\nMessage: There is no \'EXPOSE\' instruction.Without exposed ports how will the service of the container be accessed?.\nReference --> \nhttps://docs.docker.com/reference/builder/#expose\n\nType: info\nMessage: There is no \'ENTRYPOINT\' instruction.None.\nReference --> \nhttps://docs.docker.com/reference/builder/#entrypoint\n\nType: warn\nMessage: No \'USER\' instruction.The process(es) within the container may run as root and RUN instructions my be run as root.\nReference --> \nhttps://docs.docker.com/reference/builder/#user\n");
+               "Lint Results: \nValidation Results\nErrors: 0\nWarn: 1\nInfo: 2\n\nType: INFO\nMessage: There is no \'EXPOSE\' instruction.Without exposed ports how will the service of the container be accessed?.\nReference --> \nhttps://docs.docker.com/reference/builder/#expose\n\nType: INFO\nMessage: There is no \'ENTRYPOINT\' instruction.None.\nReference --> \nhttps://docs.docker.com/reference/builder/#entrypoint\n\nType: WARN\nMessage: No \'USER\' instruction.The process(es) within the container may run as root and RUN instructions my be run as root.\nReference --> \nhttps://docs.docker.com/reference/builder/#user\n");
 
    }
    
