@@ -92,5 +92,8 @@ public class DockerfileValidationImplTest
       Assert.assertEquals(
                dockerfileValidationResult.toString(),
                "Validation Results\nErrors: 0\nWarn: 0\nInfo: 0\n");
+      
+      //This should work ideally
+      dockerfileResource.verify();
    }
 }
