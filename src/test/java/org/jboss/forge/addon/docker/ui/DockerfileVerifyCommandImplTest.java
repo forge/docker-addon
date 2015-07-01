@@ -7,17 +7,14 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.docker.resource.DockerFileResource;
-import org.jboss.forge.addon.docker.ui.DockerfileVerifyCommandImpl;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.junit.Assert;
@@ -29,35 +26,16 @@ import org.junit.runner.RunWith;
 public class DockerfileVerifyCommandImplTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:docker-addon"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
-
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap
                .create(AddonArchive.class)
                .addBeansXML()
-               .add(new FileAsset(new File(
-                        "src/test/resources/org/jboss/forge/addon/docker/ui/Dockerfile")),
+               .add(new FileAsset(new File("src/test/resources/org/jboss/forge/addon/docker/ui/Dockerfile")),
                         "org/jboss/forge/addon/docker/ui/Dockerfile")
-               .add(new FileAsset(new File(
-                        "src/test/resources/org/jboss/forge/addon/docker/ui/default_rules.yaml")),
-                        "org/jboss/forge/addon/docker/ui/default_rules.yaml")
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:docker-addon"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
-
-               );
+               .add(new FileAsset(new File("src/test/resources/org/jboss/forge/addon/docker/ui/default_rules.yaml")),
+                        "org/jboss/forge/addon/docker/ui/default_rules.yaml");
    }
 
    @Inject
@@ -81,7 +59,8 @@ public class DockerfileVerifyCommandImplTest
       Assert.assertNotNull(getClass().getResource("default_rules.yaml"));
       Assert.assertNotNull(getClass().getResource("Dockerfile"));
 
-      DockerFileResource dockerfileResource = resourceFactory.create(DockerFileResource.class, File.createTempFile("Dockerfile", ""));
+      DockerFileResource dockerfileResource = resourceFactory.create(DockerFileResource.class,
+               File.createTempFile("Dockerfile", ""));
       dockerfileResource.createNewFile();
       Assert.assertTrue(dockerfileResource.exists());
       dockerfileResource.setContents(getClass().getResource("Dockerfile").openStream());
@@ -102,7 +81,7 @@ public class DockerfileVerifyCommandImplTest
                "Lint Results: \nValidation Results\nErrors: 0\nWarn: 1\nInfo: 2\n\nType: INFO\nMessage: There is no \'EXPOSE\' instruction.Without exposed ports how will the service of the container be accessed?.\nReference --> \nhttps://docs.docker.com/reference/builder/#expose\n\nType: INFO\nMessage: There is no \'ENTRYPOINT\' instruction.None.\nReference --> \nhttps://docs.docker.com/reference/builder/#entrypoint\n\nType: WARN\nMessage: No \'USER\' instruction.The process(es) within the container may run as root and RUN instructions my be run as root.\nReference --> \nhttps://docs.docker.com/reference/builder/#user\n");
 
    }
-   
+
    @Test
    public void testDockerfileValidationWithNoRuleFile() throws Exception
    {
@@ -110,18 +89,18 @@ public class DockerfileVerifyCommandImplTest
       Assert.assertNotNull(getClass().getResource("default_rules.yaml"));
       Assert.assertNotNull(getClass().getResource("Dockerfile"));
 
-      DockerFileResource resource = resourceFactory.create(DockerFileResource.class, File.createTempFile("Dockerfile", ""));
+      DockerFileResource resource = resourceFactory.create(DockerFileResource.class,
+               File.createTempFile("Dockerfile", ""));
       resource.createNewFile();
       Assert.assertTrue(resource.exists());
       resource.setContents(getClass().getResource("Dockerfile").openStream());
-
 
       commandController.initialize();
       commandController.setValueFor("dockerfile", resource);
       Result result = commandController.execute();
       Assert.assertFalse(result instanceof Failed);
       Assert.assertEquals(
-               result.getMessage(),"Lint Results: \nValidation Results\nErrors: 0\nWarn: 0\nInfo: 0\n");
+               result.getMessage(), "Lint Results: \nValidation Results\nErrors: 0\nWarn: 0\nInfo: 0\n");
 
    }
 

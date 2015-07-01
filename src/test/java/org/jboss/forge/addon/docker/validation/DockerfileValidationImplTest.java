@@ -7,14 +7,10 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.docker.resource.DockerFileResource;
-import org.jboss.forge.addon.docker.validation.DockerfileValidationImpl;
-import org.jboss.forge.addon.docker.validation.DockerfileValidationResult;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.junit.Assert;
@@ -25,35 +21,17 @@ import org.junit.runner.RunWith;
 public class DockerfileValidationImplTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:docker-addon"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
-
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap
                .create(AddonArchive.class)
                .addBeansXML()
-               .add(new FileAsset(new File(
-                        "src/test/resources/org/jboss/forge/addon/docker/validation/Dockerfile")),
+               .add(new FileAsset(new File("src/test/resources/org/jboss/forge/addon/docker/validation/Dockerfile")),
                         "org/jboss/forge/addon/docker/validation/Dockerfile")
                .add(new FileAsset(new File(
                         "src/test/resources/org/jboss/forge/addon/docker/validation/default_rules.yaml")),
-                        "org/jboss/forge/addon/docker/validation/default_rules.yaml")
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:docker-addon"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
-
-               );
+                        "org/jboss/forge/addon/docker/validation/default_rules.yaml");
    }
 
    @Inject
