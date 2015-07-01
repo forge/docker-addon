@@ -76,7 +76,7 @@ public class DockerfileSetupCommandTest
    }
 
    @Test
-   public void testDockerfileCalledTwice() throws Exception
+   public void testDockerfileSetupCalledTwice() throws Exception
    {
       commandController.execute();
       Assert.assertTrue(project.getRoot().reify(DirectoryResource.class).getChild("Dockerfile").exists());
