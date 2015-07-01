@@ -24,25 +24,16 @@
       <developer>
          <id>devanshy</id>
          <name>Devanshu Singh</name>
-         <email>d9110@gmail.com</email>
+         <email>devanshu911@gmail.com</email>
       </developer>
-      <developer>
+   </developers>
+   <contributors>
+      <contributor>
          <id>gastaldi</id>
          <name>George Gastaldi</name>
          <email>gegastaldi@gmail.com</email>
-      </developer>
-      <developer>
-         <id>koen</id>
-         <name>Koen Aers</name>
-         <email>koen.aers@gmail.com</email>
-      </developer>
-      <developer>
-         <id>stale</id>
-         <name>Stale Pedersen</name>
-         <email>stalep@gmail.com</email>
-      </developer>
-   </developers>
-
+      </contributor>
+   </contributors>
    <properties>
       <maven.compiler.source>1.7</maven.compiler.source>
       <maven.compiler.target>1.7</maven.compiler.target>
