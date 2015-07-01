@@ -16,24 +16,6 @@ public class DockerfileValidationResult
       return result;
    }
 
-   public void addValidationResult(String type, String message, String line, Integer lineNumber)
-   {
-
-      if (type.toUpperCase().equals("ERROR"))
-      {
-         addError(message, line, lineNumber);
-      }
-      else if (type.toUpperCase().equals("WARN"))
-      {
-         addWarn(message, line, lineNumber);
-      }
-      else if (type.toUpperCase().equals("INFO"))
-      {
-         addInfo(message, line, lineNumber);
-      }
-
-   }
-
    public void addError(String message, String line, Integer lineNumber)
    {
       errors++;
@@ -85,12 +67,6 @@ public class DockerfileValidationResult
       }
 
       return validationResult.toString();
-
-   }
-
-   public void addValidationResult(String type, String message)
-   {
-      addValidationResult(type, message, "", -1);
 
    }
 

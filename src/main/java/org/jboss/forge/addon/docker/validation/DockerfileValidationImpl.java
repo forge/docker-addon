@@ -265,7 +265,7 @@ public class DockerfileValidationImpl
                sb.append(reference);
             }
 
-            dockerfileValidationResult.addValidationResult((String) map.get("level"), sb.toString());
+            addValidationResult(dockerfileValidationResult, (String) map.get("level"), sb.toString());
          }
 
       }
@@ -295,13 +295,13 @@ public class DockerfileValidationImpl
             {
                if (testRegex(rule.get("regex"), currentLine) && !invr)
                {
-                  dockerfileValidationResult.addValidationResult(rule.get("level"), rule.get("message"), currentLine,
+                  addValidationResult(dockerfileValidationResult, rule.get("level"), rule.get("message"), currentLine,
                            currentLineIndex);
                }
 
                if (!testRegex(rule.get("regex"), currentLine) && invr)
                {
-                  dockerfileValidationResult.addValidationResult(rule.get("level"), rule.get("message"), currentLine,
+                  addValidationResult(dockerfileValidationResult, rule.get("level"), rule.get("message"), currentLine,
                            currentLineIndex);
                }
 
@@ -385,4 +385,32 @@ public class DockerfileValidationImpl
    {
       this.baseRuleFile = baseRuleFile;
    }
+
+   private void addValidationResult(DockerfileValidationResult dockerfileValidationResult, String type, String message,
+            String line, Integer lineNumber)
+   {
+
+      if (type != null)
+      {
+         if (type.toUpperCase().equals("ERROR"))
+         {
+            dockerfileValidationResult.addError(message, line, lineNumber);
+         }
+         else if (type.toUpperCase().equals("WARN"))
+         {
+            dockerfileValidationResult.addWarn(message, line, lineNumber);
+         }
+         else if (type.toUpperCase().equals("INFO"))
+         {
+            dockerfileValidationResult.addInfo(message, line, lineNumber);
+         }
+      }
+   }
+
+   private void addValidationResult(DockerfileValidationResult dockerfileValidationResult, String type, String message)
+   {
+      addValidationResult(dockerfileValidationResult, type, message, "", -1);
+
+   }
+
 }
