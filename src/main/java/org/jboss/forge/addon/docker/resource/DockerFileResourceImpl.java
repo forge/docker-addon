@@ -37,12 +37,12 @@ class DockerFileResourceImpl extends AbstractFileResource<DockerFileResource> im
    @Override
    public DockerfileValidationResult verify()
    {
-      return new DockerfileValidationImpl().verify(this);
+      return new DockerfileValidationImpl(getResourceFactory()).verify(this);
    }
 
    public DockerfileValidationResult verify(Resource<?> ruleFile)
    {
-      return new DockerfileValidationImpl().verify(this, ruleFile);
+      return new DockerfileValidationImpl(getResourceFactory()).verify(this, ruleFile);
    }
 
    @Override

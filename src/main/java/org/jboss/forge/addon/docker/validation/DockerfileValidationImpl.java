@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.docker.resource.DockerFileResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -24,14 +22,13 @@ public class DockerfileValidationImpl
    // TODO add support for JavaScript regexes.
    // TODO add support for case insensitive regexes.
 
-   @Inject
    private ResourceFactory resourceFactory;
 
    private FileResource<?> baseRuleFile = null;
 
-   public DockerfileValidationImpl()
+   public DockerfileValidationImpl(ResourceFactory resourceFactory)
    {
-
+      this.resourceFactory = resourceFactory;
    }
 
    @SuppressWarnings("unchecked")

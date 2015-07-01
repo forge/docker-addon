@@ -3,7 +3,6 @@ package org.jboss.forge.addon.docker.ui;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.docker.resource.DockerFileResource;
-import org.jboss.forge.addon.docker.validation.DockerfileValidationImpl;
 import org.jboss.forge.addon.docker.validation.DockerfileValidationResult;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
@@ -42,9 +41,6 @@ public class DockerfileVerifyCommandImpl extends AbstractUICommand implements Do
                .category(Categories.create("Docker"));
    }
 
-   @Inject
-   DockerfileValidationImpl imp;
-
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
@@ -60,10 +56,10 @@ public class DockerfileVerifyCommandImpl extends AbstractUICommand implements Do
          return Results.fail("Rulefile not found");
 
       if (rulefile.getValue() == null)
-         result = imp.verify(dockerfile.getValue());
+         result = dockerfile.getValue().verify();
 
       else
-         result = imp.verify(dockerfile.getValue(), rulefile.getValue());
+         result = dockerfile.getValue().verify(rulefile.getValue());
 
       return Results.success("Lint Results: \n" + result.toString());
    }

@@ -37,9 +37,6 @@ public class DockerfileValidationImplTest
    @Inject
    ResourceFactory resourceFactory;
 
-   @Inject
-   DockerfileValidationImpl dockerfileValidationImpl;
-
    @Test
    public void testDockerfileValidation() throws Exception
    {
@@ -59,7 +56,7 @@ public class DockerfileValidationImplTest
       Assert.assertTrue(ruleFile.exists());
       ruleFile.setContents(getClass().getResource("default_rules.yaml").openStream());
 
-      DockerfileValidationResult dockerfileValidationResult = dockerfileValidationImpl.verify(dockerfileResource,
+      DockerfileValidationResult dockerfileValidationResult = dockerfileResource.verify(
                ruleFile);
 
       Assert.assertEquals(dockerfileValidationResult.getErrors(), 0);
@@ -83,7 +80,7 @@ public class DockerfileValidationImplTest
       Assert.assertTrue(dockerfileResource.exists());
       dockerfileResource.setContents(getClass().getResource("Dockerfile").openStream());
 
-      DockerfileValidationResult dockerfileValidationResult = dockerfileValidationImpl.verify(dockerfileResource);
+      DockerfileValidationResult dockerfileValidationResult = dockerfileResource.verify();
 
       Assert.assertEquals(dockerfileValidationResult.getErrors(), 0);
       Assert.assertEquals(dockerfileValidationResult.getWarn(), 0);
@@ -92,8 +89,5 @@ public class DockerfileValidationImplTest
       Assert.assertEquals(
                dockerfileValidationResult.toString(),
                "Validation Results\nErrors: 0\nWarn: 0\nInfo: 0\n");
-      
-      //This should work ideally
-      dockerfileResource.verify();
    }
 }
