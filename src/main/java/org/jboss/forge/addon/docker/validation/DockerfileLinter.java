@@ -17,7 +17,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.yaml.snakeyaml.Yaml;
 
-public class DockerfileValidationImpl
+public class DockerfileLinter
 {
    // TODO add support for JavaScript regexes.
    // TODO add support for case insensitive regexes.
@@ -26,7 +26,7 @@ public class DockerfileValidationImpl
 
    private FileResource<?> baseRuleFile = null;
 
-   public DockerfileValidationImpl(ResourceFactory resourceFactory)
+   public DockerfileLinter(ResourceFactory resourceFactory)
    {
       this.resourceFactory = resourceFactory;
    }
@@ -56,12 +56,12 @@ public class DockerfileValidationImpl
       return fileResource;
    }
 
-   public DockerfileValidationResult verify(DockerFileResource dockerfile)
+   public DockerfileValidationResult lint(DockerFileResource dockerfile)
    {
-      return verify(dockerfile, null);
+      return lint(dockerfile, null);
    }
 
-   public DockerfileValidationResult verify(DockerFileResource dockerfile, Resource<?> ruleFile)
+   public DockerfileValidationResult lint(DockerFileResource dockerfile, Resource<?> ruleFile)
 
    {
       if (baseRuleFile == null)

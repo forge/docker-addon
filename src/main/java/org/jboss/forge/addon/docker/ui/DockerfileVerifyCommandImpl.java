@@ -56,10 +56,10 @@ public class DockerfileVerifyCommandImpl extends AbstractUICommand implements Do
          return Results.fail("Rulefile not found");
 
       if (rulefile.getValue() == null)
-         result = dockerfile.getValue().verify();
+         result = dockerfile.getValue().lint();
 
       else
-         result = dockerfile.getValue().verify(rulefile.getValue());
+         result = dockerfile.getValue().lint(rulefile.getValue());
 
       return Results.success("Lint Results: \n" + result.toString());
    }

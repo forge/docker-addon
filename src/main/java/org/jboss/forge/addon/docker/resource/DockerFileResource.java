@@ -19,7 +19,7 @@ public interface DockerFileResource extends FileResource<DockerFileResource>
     * 
     * @return The result of validation containing errors, warnings and info.
     */
-   DockerfileValidationResult verify();
+   DockerfileValidationResult lint();
 
    /**
     * Return the {@link DockerfileValidationResult} validating the underlying Dockerfile against the given rule file.
@@ -27,7 +27,7 @@ public interface DockerFileResource extends FileResource<DockerFileResource>
     * @param ruleFile The {@link Resource} which is the abstraction for YAML rule file used to lint against.
     * @return The result of validation containing errors, warnings and info.
     */
-   DockerfileValidationResult verify(Resource<?> ruleFile);
+   DockerfileValidationResult lint(Resource<?> ruleFile);
 
    /**
     * Return the {@link DockerDescriptor} representing the underlying Dockerfile.

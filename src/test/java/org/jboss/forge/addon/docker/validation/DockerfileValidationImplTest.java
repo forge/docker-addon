@@ -56,7 +56,7 @@ public class DockerfileValidationImplTest
       Assert.assertTrue(ruleFile.exists());
       ruleFile.setContents(getClass().getResource("default_rules.yaml").openStream());
 
-      DockerfileValidationResult dockerfileValidationResult = dockerfileResource.verify(
+      DockerfileValidationResult dockerfileValidationResult = dockerfileResource.lint(
                ruleFile);
 
       Assert.assertEquals(dockerfileValidationResult.getErrors(), 0);
@@ -80,7 +80,7 @@ public class DockerfileValidationImplTest
       Assert.assertTrue(dockerfileResource.exists());
       dockerfileResource.setContents(getClass().getResource("Dockerfile").openStream());
 
-      DockerfileValidationResult dockerfileValidationResult = dockerfileResource.verify();
+      DockerfileValidationResult dockerfileValidationResult = dockerfileResource.lint();
 
       Assert.assertEquals(dockerfileValidationResult.getErrors(), 0);
       Assert.assertEquals(dockerfileValidationResult.getWarn(), 0);
