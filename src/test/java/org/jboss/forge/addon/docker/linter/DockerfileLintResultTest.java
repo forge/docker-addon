@@ -1,9 +1,10 @@
-package org.jboss.forge.addon.docker.validation;
+package org.jboss.forge.addon.docker.linter;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.docker.linter.DockerfileLintResult;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -12,7 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class DockerfileValidationResultTest
+public class DockerfileLintResultTest
 {
 
    @Deployment
@@ -23,10 +24,10 @@ public class DockerfileValidationResultTest
    }
 
    @Inject
-   DockerfileValidationResult result;
+   DockerfileLintResult result;
 
    @Test
-   public void testDockerfileValidationResult()
+   public void testDockerfileLintResult()
    {
 
       Assert.assertEquals(result.toString(), "Validation Results\nErrors: 0\nWarn: 0\nInfo: 0\n");

@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.docker.resource;
 
-import org.jboss.forge.addon.docker.validation.DockerfileValidationResult;
+import org.jboss.forge.addon.docker.linter.DockerfileLintResult;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.shrinkwrap.descriptor.api.docker.DockerDescriptor;
@@ -14,20 +14,19 @@ import org.jboss.shrinkwrap.descriptor.api.docker.DockerDescriptor;
 public interface DockerFileResource extends FileResource<DockerFileResource>
 {
    /**
-    * Return the {@link DockerfileValidationResult} validating the underlying Dockerfile against a set of preset base
-    * rules.
+    * Return the {@link DockerfileLintResult} ,lint the underlying Dockerfile against a set of preset base rules.
     * 
     * @return The result of validation containing errors, warnings and info.
     */
-   DockerfileValidationResult lint();
+   DockerfileLintResult lint();
 
    /**
-    * Return the {@link DockerfileValidationResult} validating the underlying Dockerfile against the given rule file.
+    * Return the {@link DockerfileLintResult} ,lint the underlying Dockerfile against the given rule file.
     * 
     * @param ruleFile The {@link Resource} which is the abstraction for YAML rule file used to lint against.
     * @return The result of validation containing errors, warnings and info.
     */
-   DockerfileValidationResult lint(Resource<?> ruleFile);
+   DockerfileLintResult lint(Resource<?> ruleFile);
 
    /**
     * Return the {@link DockerDescriptor} representing the underlying Dockerfile.

@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.docker.validation;
+package org.jboss.forge.addon.docker.linter;
 
 import java.io.File;
 
@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.docker.linter.DockerfileLintResult;
 import org.jboss.forge.addon.docker.resource.DockerFileResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -18,7 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class DockerfileValidationImplTest
+public class DockerfileLinterImplTest
 {
    @Deployment
    @AddonDependencies
@@ -27,18 +28,18 @@ public class DockerfileValidationImplTest
       return ShrinkWrap
                .create(AddonArchive.class)
                .addBeansXML()
-               .add(new FileAsset(new File("src/test/resources/org/jboss/forge/addon/docker/validation/Dockerfile")),
-                        "org/jboss/forge/addon/docker/validation/Dockerfile")
+               .add(new FileAsset(new File("src/test/resources/org/jboss/forge/addon/docker/linter/Dockerfile")),
+                        "org/jboss/forge/addon/docker/linter/Dockerfile")
                .add(new FileAsset(new File(
-                        "src/test/resources/org/jboss/forge/addon/docker/validation/default_rules.yaml")),
-                        "org/jboss/forge/addon/docker/validation/default_rules.yaml");
+                        "src/test/resources/org/jboss/forge/addon/docker/linter/default_rules.yaml")),
+                        "org/jboss/forge/addon/docker/linter/default_rules.yaml");
    }
 
    @Inject
    ResourceFactory resourceFactory;
 
    @Test
-   public void testDockerfileValidation() throws Exception
+   public void testDockerfileLinter() throws Exception
    {
 
       Assert.assertNotNull(getClass().getResource("default_rules.yaml"));
@@ -56,21 +57,21 @@ public class DockerfileValidationImplTest
       Assert.assertTrue(ruleFile.exists());
       ruleFile.setContents(getClass().getResource("default_rules.yaml").openStream());
 
-      DockerfileValidationResult dockerfileValidationResult = dockerfileResource.lint(
+      DockerfileLintResult lintResult = dockerfileResource.lint(
                ruleFile);
 
-      Assert.assertEquals(dockerfileValidationResult.getErrors(), 0);
-      Assert.assertEquals(dockerfileValidationResult.getWarn(), 1);
-      Assert.assertEquals(dockerfileValidationResult.getInfo(), 2);
+      Assert.assertEquals(lintResult.getErrors(), 0);
+      Assert.assertEquals(lintResult.getWarn(), 1);
+      Assert.assertEquals(lintResult.getInfo(), 2);
 
       Assert.assertEquals(
-               dockerfileValidationResult.toString(),
+               lintResult.toString(),
                "Validation Results\nErrors: 0\nWarn: 1\nInfo: 2\n\nType: INFO\nMessage: There is no \'EXPOSE\' instruction.Without exposed ports how will the service of the container be accessed?.\nReference --> \nhttps://docs.docker.com/reference/builder/#expose\n\nType: INFO\nMessage: There is no \'ENTRYPOINT\' instruction.None.\nReference --> \nhttps://docs.docker.com/reference/builder/#entrypoint\n\nType: WARN\nMessage: No \'USER\' instruction.The process(es) within the container may run as root and RUN instructions my be run as root.\nReference --> \nhttps://docs.docker.com/reference/builder/#user\n");
 
    }
 
    @Test
-   public void testDockerfileValidationWithNoRuleFile() throws Exception
+   public void testDockerfileLinterWithNoRuleFile() throws Exception
    {
       Assert.assertNotNull(getClass().getResource("Dockerfile"));
 
@@ -80,14 +81,14 @@ public class DockerfileValidationImplTest
       Assert.assertTrue(dockerfileResource.exists());
       dockerfileResource.setContents(getClass().getResource("Dockerfile").openStream());
 
-      DockerfileValidationResult dockerfileValidationResult = dockerfileResource.lint();
+      DockerfileLintResult lintResult = dockerfileResource.lint();
 
-      Assert.assertEquals(dockerfileValidationResult.getErrors(), 0);
-      Assert.assertEquals(dockerfileValidationResult.getWarn(), 0);
-      Assert.assertEquals(dockerfileValidationResult.getInfo(), 0);
+      Assert.assertEquals(lintResult.getErrors(), 0);
+      Assert.assertEquals(lintResult.getWarn(), 0);
+      Assert.assertEquals(lintResult.getInfo(), 0);
 
       Assert.assertEquals(
-               dockerfileValidationResult.toString(),
+               lintResult.toString(),
                "Validation Results\nErrors: 0\nWarn: 0\nInfo: 0\n");
    }
 }

@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.docker.validation;
+package org.jboss.forge.addon.docker.linter;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,12 +56,12 @@ public class DockerfileLinter
       return fileResource;
    }
 
-   public DockerfileValidationResult lint(DockerFileResource dockerfile)
+   public DockerfileLintResult lint(DockerFileResource dockerfile)
    {
       return lint(dockerfile, null);
    }
 
-   public DockerfileValidationResult lint(DockerFileResource dockerfile, Resource<?> ruleFile)
+   public DockerfileLintResult lint(DockerFileResource dockerfile, Resource<?> ruleFile)
 
    {
       if (baseRuleFile == null)
@@ -120,7 +120,7 @@ public class DockerfileLinter
       boolean fromCheck = false;
       int currentLineIndex = 0;
 
-      DockerfileValidationResult dockerfileValidationResult = new DockerfileValidationResult();
+      DockerfileLintResult dockerfileLintResult = new DockerfileLintResult();
 
       while (i.hasNext())
       {
@@ -157,7 +157,7 @@ public class DockerfileLinter
 
             if (currentLine.toUpperCase().indexOf("FROM") != 0)
             {
-               dockerfileValidationResult
+               dockerfileLintResult
                         .addError("FROM statement missing or misplaced", currentLine, currentLineIndex);
             }
 
@@ -165,13 +165,13 @@ public class DockerfileLinter
 
          if (instructionRegex != null && !testRegex(instructionRegex, currentLine))
          {
-            dockerfileValidationResult.addError("Not a Instruction", currentLine, currentLineIndex);
+            dockerfileLintResult.addError("Not a Instruction", currentLine, currentLineIndex);
             continue;
          }
 
          if (validInstructionRegex != null && !testRegex(validInstructionRegex, currentLine))
          {
-            dockerfileValidationResult.addError("Not a Valid Instruction", currentLine, currentLineIndex);
+            dockerfileLintResult.addError("Not a Valid Instruction", currentLine, currentLineIndex);
             continue;
          }
 
@@ -198,7 +198,7 @@ public class DockerfileLinter
          @SuppressWarnings("unchecked")
          List<Object> instructionRules = (List<Object>) ((Map<String, Object>) linerules.get(instruction)).get("rules");
 
-         checkLineRules(instruction, currentLine, instructionRules, dockerfileValidationResult, currentLineIndex);
+         checkLineRules(instruction, currentLine, instructionRules, dockerfileLintResult, currentLineIndex);
 
          @SuppressWarnings("unchecked")
          String parameterSyntaxRegex = (String) ((Map<String, String>) linerules.get(instruction))
@@ -207,14 +207,14 @@ public class DockerfileLinter
 
          if (parameterSyntaxRegex != null && !testRegex(parameterSyntaxRegex, parameters))
          {
-            dockerfileValidationResult.addError("Bad Parameters", currentLine, currentLineIndex);
+            dockerfileLintResult.addError("Bad Parameters", currentLine, currentLineIndex);
             continue;
          }
       }
 
-      checkRequiredInstructions(requiredInstructions, dockerfileValidationResult, reqinst);
+      checkRequiredInstructions(requiredInstructions, dockerfileLintResult, reqinst);
 
-      return dockerfileValidationResult;
+      return dockerfileLintResult;
    }
 
    private boolean testRegex(String regex, String source)
@@ -238,7 +238,7 @@ public class DockerfileLinter
    }
 
    private void checkRequiredInstructions(Map<String, Integer> requiredInstructions,
-            DockerfileValidationResult dockerfileValidationResult,
+            DockerfileLintResult dockerfileLintResult,
             List<Object> reqinst)
    {
       for (Object o : reqinst)
@@ -262,7 +262,7 @@ public class DockerfileLinter
                sb.append(reference);
             }
 
-            addValidationResult(dockerfileValidationResult, (String) map.get("level"), sb.toString());
+            addLintResult(dockerfileLintResult, (String) map.get("level"), sb.toString());
          }
 
       }
@@ -270,7 +270,7 @@ public class DockerfileLinter
    }
 
    private void checkLineRules(String instruction, String currentLine, List<Object> instructionRules,
-            DockerfileValidationResult dockerfileValidationResult,
+            DockerfileLintResult dockerfileLintResult,
             int currentLineIndex)
    {
 
@@ -292,13 +292,13 @@ public class DockerfileLinter
             {
                if (testRegex(rule.get("regex"), currentLine) && !invr)
                {
-                  addValidationResult(dockerfileValidationResult, rule.get("level"), rule.get("message"), currentLine,
+                  addLintResult(dockerfileLintResult, rule.get("level"), rule.get("message"), currentLine,
                            currentLineIndex);
                }
 
                if (!testRegex(rule.get("regex"), currentLine) && invr)
                {
-                  addValidationResult(dockerfileValidationResult, rule.get("level"), rule.get("message"), currentLine,
+                  addLintResult(dockerfileLintResult, rule.get("level"), rule.get("message"), currentLine,
                            currentLineIndex);
                }
 
@@ -383,7 +383,7 @@ public class DockerfileLinter
       this.baseRuleFile = baseRuleFile;
    }
 
-   private void addValidationResult(DockerfileValidationResult dockerfileValidationResult, String type, String message,
+   private void addLintResult(DockerfileLintResult dockerfileLintResult, String type, String message,
             String line, Integer lineNumber)
    {
 
@@ -391,22 +391,22 @@ public class DockerfileLinter
       {
          if (type.toUpperCase().equals("ERROR"))
          {
-            dockerfileValidationResult.addError(message, line, lineNumber);
+            dockerfileLintResult.addError(message, line, lineNumber);
          }
          else if (type.toUpperCase().equals("WARN"))
          {
-            dockerfileValidationResult.addWarn(message, line, lineNumber);
+            dockerfileLintResult.addWarn(message, line, lineNumber);
          }
          else if (type.toUpperCase().equals("INFO"))
          {
-            dockerfileValidationResult.addInfo(message, line, lineNumber);
+            dockerfileLintResult.addInfo(message, line, lineNumber);
          }
       }
    }
 
-   private void addValidationResult(DockerfileValidationResult dockerfileValidationResult, String type, String message)
+   private void addLintResult(DockerfileLintResult dockerfileLintResult, String type, String message)
    {
-      addValidationResult(dockerfileValidationResult, type, message, "", -1);
+      addLintResult(dockerfileLintResult, type, message, "", -1);
 
    }
 

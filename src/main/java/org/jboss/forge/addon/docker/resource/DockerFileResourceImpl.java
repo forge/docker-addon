@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.addon.docker.validation.DockerfileLinter;
-import org.jboss.forge.addon.docker.validation.DockerfileValidationResult;
+import org.jboss.forge.addon.docker.linter.DockerfileLintResult;
+import org.jboss.forge.addon.docker.linter.DockerfileLinter;
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -35,12 +35,12 @@ class DockerFileResourceImpl extends AbstractFileResource<DockerFileResource> im
    }
 
    @Override
-   public DockerfileValidationResult lint()
+   public DockerfileLintResult lint()
    {
       return new DockerfileLinter(getResourceFactory()).lint(this);
    }
 
-   public DockerfileValidationResult lint(Resource<?> ruleFile)
+   public DockerfileLintResult lint(Resource<?> ruleFile)
    {
       return new DockerfileLinter(getResourceFactory()).lint(this, ruleFile);
    }

@@ -2,8 +2,8 @@ package org.jboss.forge.addon.docker.ui;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.docker.linter.DockerfileLintResult;
 import org.jboss.forge.addon.docker.resource.DockerFileResource;
-import org.jboss.forge.addon.docker.validation.DockerfileValidationResult;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -18,25 +18,25 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
- * Implementation of the "dockerfile-verify" command.Lints Dockerfiles against specified rules written in YAML.
+ * Implementation of the "dockerfile-lint" command.Lints Dockerfiles against specified rules written in YAML.
  * 
  * @author <a href="mailto:devanshu911@gmail.com">Devanshu Singh</a>
  */
-public class DockerfileVerifyCommandImpl extends AbstractUICommand implements DockerfileVerifyCommand
+public class DockerfileLintCommandImpl extends AbstractUICommand implements DockerfileLintCommand
 {
 
    @Inject
-   @WithAttributes(label = "Dockerfile", description = "The Dockerfile to be verifyed", required = true)
+   @WithAttributes(label = "Dockerfile", description = "The Dockerfile to be linted", required = true)
    private UISelectOne<DockerFileResource> dockerfile;
 
    @Inject
-   @WithAttributes(label = "Rule File", description = "The rule file against which the dockerfile should be verified")
+   @WithAttributes(label = "Rule File", description = "The rule file against which the dockerfile should be linted")
    private UISelectOne<FileResource<?>> rulefile;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("Dockerfile: Verify")
+      return Metadata.forCommand(getClass()).name("Dockerfile: Lint")
                .description("Dockerfile Linter")
                .category(Categories.create("Docker"));
    }
@@ -44,7 +44,7 @@ public class DockerfileVerifyCommandImpl extends AbstractUICommand implements Do
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      DockerfileValidationResult result;
+      DockerfileLintResult result;
 
       if (!dockerfile.getValue().exists())
          return Results.fail("Dockerfile not found");

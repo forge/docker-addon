@@ -1,19 +1,19 @@
-package org.jboss.forge.addon.docker.validation;
+package org.jboss.forge.addon.docker.linter;
 
-class DockerfileLineValidationResult
+class DockerfileLineLintResult
 {
 
-   private final DockerfileValidationResultType type;
+   private final DockerfileLintResultType type;
    private final String message;
    private final String line;
    private final Integer lineNumber;
 
-   public DockerfileLineValidationResult(DockerfileValidationResultType type)
+   public DockerfileLineLintResult(DockerfileLintResultType type)
    {
       this(type, null, null, -1);
    }
 
-   public DockerfileLineValidationResult(DockerfileValidationResultType type, String message, String line,
+   public DockerfileLineLintResult(DockerfileLintResultType type, String message, String line,
             Integer lineNumber)
    {
       this.type = type;
@@ -22,7 +22,7 @@ class DockerfileLineValidationResult
       this.lineNumber = lineNumber;
    }
 
-   public DockerfileValidationResultType getType()
+   public DockerfileLintResultType getType()
    {
       return type;
    }

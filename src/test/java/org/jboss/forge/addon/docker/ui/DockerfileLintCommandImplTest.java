@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class DockerfileVerifyCommandImplTest
+public class DockerfileLintCommandImplTest
 {
    @Deployment
    @AddonDependencies
@@ -49,11 +49,11 @@ public class DockerfileVerifyCommandImplTest
    @Before
    public void setup() throws Exception
    {
-      commandController = testHarness.createCommandController(DockerfileVerifyCommandImpl.class);
+      commandController = testHarness.createCommandController(DockerfileLintCommandImpl.class);
    }
 
    @Test
-   public void testDockerfileValidation() throws Exception
+   public void testDockerfileLint() throws Exception
    {
 
       Assert.assertNotNull(getClass().getResource("default_rules.yaml"));
@@ -83,7 +83,7 @@ public class DockerfileVerifyCommandImplTest
    }
 
    @Test
-   public void testDockerfileValidationWithNoRuleFile() throws Exception
+   public void testDockerfileLintWithNoRuleFile() throws Exception
    {
 
       Assert.assertNotNull(getClass().getResource("default_rules.yaml"));
