@@ -27,7 +27,7 @@ public class DockerFileResourceGenerator implements ResourceGenerator<DockerFile
    @Override
    public boolean handles(Class<?> type, Object resource)
    {
-      if (resource instanceof File)
+      if (resource instanceof File && ((File) resource).getName().startsWith("Dockerfile"))
       {
          return true;
       }

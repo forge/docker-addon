@@ -36,34 +36,45 @@ public class DockerfileSetupCommandTest
    private UITestHarness testHarness;
 
    private Project project;
-   private CommandController commandController;
 
    @Before
    public void setup() throws Exception
    {
       project = projectFactory.createTempProject();
-      commandController = testHarness.createCommandController(DockerfileSetupCommandImpl.class, project.getRoot());
-      commandController.initialize();
    }
 
    @Test
    public void testDockerfileSetup() throws Exception
    {
-      Result result = commandController.execute();
-      Assert.assertTrue(project.getRoot().reify(DirectoryResource.class).getChild("Dockerfile").exists());
-      Assert.assertEquals("Dockerfile has been installed.", result.getMessage());
+      try (CommandController commandController = testHarness.createCommandController(DockerfileSetupCommandImpl.class,
+               project.getRoot()))
+      {
+         commandController.initialize();
+         Result result = commandController.execute();
+         Assert.assertTrue(project.getRoot().reify(DirectoryResource.class).getChild("Dockerfile").exists());
+         Assert.assertEquals("Dockerfile has been installed.", result.getMessage());
+      }
    }
 
    @Test
    public void testDockerfileSetupCalledTwice() throws Exception
    {
-      commandController.execute();
+      try (CommandController commandController = testHarness.createCommandController(DockerfileSetupCommandImpl.class,
+               project.getRoot()))
+      {
+         commandController.initialize();
+         commandController.execute();
+      }
       Assert.assertTrue(project.getRoot().reify(DirectoryResource.class).getChild("Dockerfile").exists());
 
-      commandController.initialize();
-      Result result = commandController.execute();
-      Assert.assertTrue(project.getRoot().reify(DirectoryResource.class).getChild("Dockerfile").exists());
-      Assert.assertEquals("Dockerfile has been installed.", result.getMessage());
+      try (CommandController commandController = testHarness.createCommandController(DockerfileSetupCommandImpl.class,
+               project.getRoot()))
+      {
+         commandController.initialize();
+         Result result = commandController.execute();
+         Assert.assertTrue(project.getRoot().reify(DirectoryResource.class).getChild("Dockerfile").exists());
+         Assert.assertEquals("Dockerfile has been installed.", result.getMessage());
+      }
    }
 
    @After
