@@ -19,12 +19,12 @@ addon-install-from-git --url https://github.com/forge/docker-addon.git
 Rule files are written in YAML. The rules are implemented using regular expressions, run on one instruction of the Dockerfile at a time.
 
 
-* Dockerfile-Verify command: 
+* Dockerfile Lint command: 
 Just type the following command if you're in shell.It will run the Dockerfile linter on the input Dockerfile using the Rulefile. 
 +
-[source,java]
+[source,shell]
 ----
-dockerfile-verify —-dockerfile [Dockerfile] —-rulefile [Rulefile]
+dockerfile-lint —-dockerfile [Dockerfile] —-rulefile [Rulefile]
 ----
 +
 
@@ -42,3 +42,13 @@ DockerDescriptor resourceDescriptor = resource.getDockerDescriptor();
 +
 * Facets implementation:
 Docker addon adds a `DockerFacet` which is entry point for Docker addon API.
+
+* Dockerfile Setup Command:
+This command prepares the project for functioning in Docker context.
++
+[source,shell]
+----
+dockerfile-setup
+----
++
+It installs the `DockerFacet` in your new project.
