@@ -1,7 +1,5 @@
 package org.jboss.forge.addon.docker.facets;
 
-import java.io.File;
-
 import org.jboss.forge.addon.docker.resource.DockerFileResource;
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -19,13 +17,6 @@ public interface DockerFacet extends ProjectFacet
     * @return {@link DockerFileResource} installed.
     */
    DockerFileResource getDockerfileResource();
-
-   /**
-    * Set the {@link DockerFileResource} installed by this facet with this {@link File}.
-    * 
-    * @param file {@link File} whose contents are set to the facet Dockerfile.
-    */
-   void setDockerfile(File file);
 
    /**
     * Set the {@link DockerFileResource} installed by this facet with the {@link DockerFileResource} passed.

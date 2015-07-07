@@ -1,7 +1,5 @@
 package org.jboss.forge.addon.docker.facets;
 
-import java.io.File;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -10,7 +8,6 @@ import org.jboss.forge.addon.docker.resource.DockerFileResource;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
@@ -46,14 +43,6 @@ public class DockerFacetImplTest
       Assert.assertTrue((dockerFacet.isInstalled()));
       DockerFileResource dockerfileResource = dockerFacet.getDockerfileResource();
       Assert.assertEquals("#Dockerfile for your project", dockerfileResource.getContents());
-
-      File f = File.createTempFile("Dockerfile", "");
-      @SuppressWarnings("unchecked")
-      FileResource<?> resource = rf.create(FileResource.class, f);
-      resource.setContents("#new Dockerfile");
-      dockerFacet.setDockerfile(resource.getUnderlyingResourceObject());
-      dockerfileResource = dockerFacet.getDockerfileResource();
-      Assert.assertEquals("#new Dockerfile", dockerFacet.getDockerfileResource().getContents());
 
    }
 
