@@ -49,9 +49,6 @@ public class DockerfileLintCommandImpl extends AbstractUICommand implements Dock
       if (!dockerfile.getValue().exists())
          return Results.fail("Dockerfile not found");
 
-      if (dockerfile.getValue().getResourceInputStream() == null)
-         return Results.fail("Couldnot parse the dockerfile");
-
       if ((rulefile.getValue() != null) && (!rulefile.getValue().exists()))
          return Results.fail("Rulefile not found");
 
