@@ -12,6 +12,7 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -46,6 +47,9 @@ public class DockerfileLintCommandImpl extends AbstractUICommand implements Dock
    {
       DockerfileLintResult result;
 
+      UIContext uiContext = context.getUIContext();
+      UIOutput output = uiContext.getProvider().getOutput();
+
       if (!dockerfile.getValue().exists())
          return Results.fail("Dockerfile not found");
 
@@ -58,7 +62,26 @@ public class DockerfileLintCommandImpl extends AbstractUICommand implements Dock
       else
          result = dockerfile.getValue().lint(rulefile.getValue());
 
-      return Results.success("Lint Results: \n" + result.toString());
+      StringBuilder sb = new StringBuilder();
+
+      sb.append(result.getInfo());
+      for (String info : result.getInfoList())
+         sb.append(info);
+      output.info(output.out(), sb.toString());
+
+      sb.setLength(0);
+      sb.append(result.getWarn());
+      for (String warn : result.getWarnList())
+         sb.append(warn);
+      output.warn(output.out(), sb.toString());
+
+      sb.setLength(0);
+      sb.append(result.getErrors());
+      for (String error : result.getErrorList())
+         sb.append(error);
+      output.error(output.out(), sb.toString());
+
+      return Results.success("Linted Sucessfully");
    }
 
    @Override

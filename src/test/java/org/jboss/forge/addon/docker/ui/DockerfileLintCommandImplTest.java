@@ -76,9 +76,9 @@ public class DockerfileLintCommandImplTest
       commandController.setValueFor("rulefile", ruleFile);
       Result result = commandController.execute();
       Assert.assertFalse(result instanceof Failed);
+
       Assert.assertEquals(
-               result.getMessage(),
-               "Lint Results: \nValidation Results\nErrors: 0\nWarn: 1\nInfo: 2\n\nType: INFO\nMessage: There is no \'EXPOSE\' instruction.Without exposed ports how will the service of the container be accessed?.\nReference --> \nhttps://docs.docker.com/reference/builder/#expose\n\nType: INFO\nMessage: There is no \'ENTRYPOINT\' instruction.None.\nReference --> \nhttps://docs.docker.com/reference/builder/#entrypoint\n\nType: WARN\nMessage: No \'USER\' instruction.The process(es) within the container may run as root and RUN instructions my be run as root.\nReference --> \nhttps://docs.docker.com/reference/builder/#user\n");
+               result.getMessage(), "Linted Sucessfully");
 
    }
 
@@ -99,8 +99,9 @@ public class DockerfileLintCommandImplTest
       commandController.setValueFor("dockerfile", resource);
       Result result = commandController.execute();
       Assert.assertFalse(result instanceof Failed);
+
       Assert.assertEquals(
-               result.getMessage(), "Lint Results: \nValidation Results\nErrors: 0\nWarn: 0\nInfo: 0\n");
+               result.getMessage(), "Linted Sucessfully");
 
    }
 
