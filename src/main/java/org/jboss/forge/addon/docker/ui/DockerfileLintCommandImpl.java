@@ -1,8 +1,13 @@
 package org.jboss.forge.addon.docker.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.docker.linter.DockerfileLineLintResult;
 import org.jboss.forge.addon.docker.linter.DockerfileLintResult;
+import org.jboss.forge.addon.docker.linter.DockerfileLintResultType;
 import org.jboss.forge.addon.docker.resource.DockerFileResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
@@ -64,20 +69,36 @@ public class DockerfileLintCommandImpl extends AbstractUICommand implements Dock
 
       StringBuilder sb = new StringBuilder();
 
+      List<String> errorList = new ArrayList<>();
+      List<String> warnList = new ArrayList<>();
+      List<String> infoList = new ArrayList<>();
+
+      for (DockerfileLineLintResult res : result.getLintResults())
+      {
+         if (res.getType() == DockerfileLintResultType.INFO)
+            infoList.add(res.toString());
+
+         else if (res.getType() == DockerfileLintResultType.ERROR)
+            errorList.add(res.toString());
+
+         else if (res.getType() == DockerfileLintResultType.WARN)
+            warnList.add(res.toString());
+      }
+
       sb.append(result.getInfo());
-      for (String info : result.getInfoList())
+      for (String info : infoList)
          sb.append(info);
       output.info(output.out(), sb.toString());
 
       sb.setLength(0);
       sb.append(result.getWarn());
-      for (String warn : result.getWarnList())
+      for (String warn : warnList)
          sb.append(warn);
       output.warn(output.out(), sb.toString());
 
       sb.setLength(0);
       sb.append(result.getErrors());
-      for (String error : result.getErrorList())
+      for (String error : errorList)
          sb.append(error);
       output.error(output.out(), sb.toString());
 

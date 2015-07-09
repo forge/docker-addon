@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.docker.linter;
 
-class DockerfileLineLintResult
+public class DockerfileLineLintResult
 {
 
    private final DockerfileLintResultType type;

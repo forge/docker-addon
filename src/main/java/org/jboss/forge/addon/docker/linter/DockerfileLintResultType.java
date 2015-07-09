@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.docker.linter;
 
-enum DockerfileLintResultType
+public enum DockerfileLintResultType
 {
    ERROR, WARN, INFO
 }
