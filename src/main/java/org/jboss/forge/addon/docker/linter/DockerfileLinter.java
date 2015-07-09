@@ -19,9 +19,6 @@ import org.yaml.snakeyaml.Yaml;
 
 public class DockerfileLinter
 {
-   // TODO add support for JavaScript regexes.
-   // TODO add support for case insensitive regexes.
-
    private ResourceFactory resourceFactory;
 
    private FileResource<?> baseRuleFile = null;
@@ -31,36 +28,24 @@ public class DockerfileLinter
       this.resourceFactory = resourceFactory;
    }
 
-   @SuppressWarnings("unchecked")
-   public FileResource<?> getBaseRules()
-   {
-      InputStream ist = getClass().getResourceAsStream("base_rules.yaml");
-      File file = null;
-      try
-      {
-         file = File.createTempFile("fileresourcetest", ".yaml");
-      }
-      catch (IOException e1)
-      {
-      }
-      file.deleteOnExit();
-      FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
-      fileResource.setContents(ist);
-      try
-      {
-         ist.close();
-      }
-      catch (IOException e)
-      {
-      }
-      return fileResource;
-   }
-
+   /**
+    * Return the {@link DockerfileLintResult} ,lint the underlying Dockerfile against a set of preset base rules.
+    * 
+    * @param dockerfile The {@link DockerFileResource} to be linted.
+    * @return The result of validation containing errors, warnings and info.
+    */
    public DockerfileLintResult lint(DockerFileResource dockerfile)
    {
       return lint(dockerfile, null);
    }
 
+   /**
+    * Return the {@link DockerfileLintResult} ,lint the underlying Dockerfile against the given rule file.
+    * 
+    * @param dockerfile The {@link DockerFileResource} to be linted.
+    * @param ruleFile The {@link Resource} which is the abstraction for YAML rule file used to lint against.
+    * @return The result of validation containing errors, warnings and info.
+    */
    public DockerfileLintResult lint(DockerFileResource dockerfile, Resource<?> ruleFile)
 
    {
@@ -75,6 +60,7 @@ public class DockerfileLinter
       Map<String, Object> baseRuleFileObject = (Map<String, Object>) baseYaml.load(bis);
       Map<String, Object> object = baseRuleFileObject;
 
+      // Load the rule file YAML object.
       if (ruleFile != null)
       {
          InputStream is = ruleFile.getResourceInputStream();
@@ -95,12 +81,15 @@ public class DockerfileLinter
       // @SuppressWarnings("unchecked")
       // Map<String, String> profile = (Map<String, String>) object.get("profile");
 
+      // Map representing the "line_rules" section of the rule file.
       @SuppressWarnings("unchecked")
       Map<String, Object> linerules = (Map<String, Object>) object.get("line_rules");
 
+      // Map representing the "required_instructions" section of the rule file.
       @SuppressWarnings("unchecked")
       List<Object> reqinst = (List<Object>) object.get("required_instructions");
 
+      // Map representing the "general" section of the rule file.
       @SuppressWarnings("unchecked")
       Map<String, Object> general = (Map<String, Object>) object.get("general");
 
@@ -128,21 +117,24 @@ public class DockerfileLinter
          String currentLine = i.next();
          currentLineIndex++;
 
+         // ignore blank lines.
          if (currentLine == null || currentLine.length() == 0)
          {
             continue;
          }
 
+         // ignore comments.
          if (currentLine.charAt(0) == '#')
          {
             continue;
          }
-
+         // ignore if "ignoreRegex" matches the current line.
          if (ignoreRegex != null && testRegex(ignoreRegex, currentLine))
          {
             continue;
          }
 
+         // join multiple lines into one using the "multiLineRegex" match on the current line.
          while (multiLineRegex != null && testRegex(multiLineRegex, currentLine))
          {
             currentLine = currentLine.replaceFirst(multiLineRegex, " ");
@@ -151,6 +143,7 @@ public class DockerfileLinter
             currentLineIndex++;
          }
 
+         // Check if the presence the required "FROM" instruction has been checked.
          if (!fromCheck)
          {
             fromCheck = true;
@@ -163,12 +156,14 @@ public class DockerfileLinter
 
          }
 
+         // Add error if the current line does not contain the "instructionRegex" defined in the rule file.
          if (instructionRegex != null && !testRegex(instructionRegex, currentLine))
          {
             dockerfileLintResult.addError("Not a Instruction", currentLine, currentLineIndex);
             continue;
          }
 
+         // Add error if the current line does not contain a Valid Instruction.
          if (validInstructionRegex != null && !testRegex(validInstructionRegex, currentLine))
          {
             dockerfileLintResult.addError("Not a Valid Instruction", currentLine, currentLineIndex);
@@ -190,6 +185,7 @@ public class DockerfileLinter
             continue;
          }
 
+         // Reduce the number of occurrences required of the current instruction by one because one has been just found.
          if (requiredInstructions.get(instruction) != null)
          {
             requiredInstructions.put(instruction, requiredInstructions.get(instruction) - 1);
@@ -198,13 +194,17 @@ public class DockerfileLinter
          @SuppressWarnings("unchecked")
          List<Object> instructionRules = (List<Object>) ((Map<String, Object>) linerules.get(instruction)).get("rules");
 
+         // check the line rules for the instruction found.
          checkLineRules(instruction, currentLine, instructionRules, dockerfileLintResult, currentLineIndex);
 
          @SuppressWarnings("unchecked")
          String parameterSyntaxRegex = (String) ((Map<String, String>) linerules.get(instruction))
                   .get("paramSyntaxRegex");
+
+         // Extract the command parameters.
          String parameters = currentLine.substring(matcher.end());
 
+         // check the parameter rules for the instruction found by matching the "paramSyntaxRegex" to the parameter.
          if (parameterSyntaxRegex != null && !testRegex(parameterSyntaxRegex, parameters))
          {
             dockerfileLintResult.addError("Bad Parameters", currentLine, currentLineIndex);
@@ -212,17 +212,33 @@ public class DockerfileLinter
          }
       }
 
+      // Check whether all instructions defined in the "required_instructions" section of the rule file exist.
       checkRequiredInstructions(requiredInstructions, dockerfileLintResult, reqinst);
 
       return dockerfileLintResult;
    }
 
+   /**
+    * Return the {@link boolean} ,returns true if the source matches the regex.
+    * 
+    * @param regex The {@link String} representing the Regular Expression.
+    * @param source The {@link String} representing the source text.
+    * @return Boolean result of the pattern match.
+    */
    private boolean testRegex(String regex, String source)
    {
       return (Pattern.compile(regex).matcher(source).find());
 
    }
 
+   /**
+    * Return the {@link Map} ,representing the Dockerfile Command name as the key and the number of command occurrences
+    * required by the lint file as values.
+    * 
+    * @param requiredInstructions The {@link List},representing "required_instructions" section of the YAML rule file.
+    * @return Map result of parsing the "required_instructions" section of the YAML rule file as Dockerfile Command name
+    *         as the key and the number of command occurrences required by the lint file as values.
+    */
    private Map<String, Integer> setupReqInstExists(List<Object> requiredInstructions)
    {
 
@@ -237,6 +253,15 @@ public class DockerfileLinter
       return reqInst;
    }
 
+   /**
+    * Validate and add messages defined in YAML rule file to the {@link DockerfileLintResult} based on the problem found
+    * in the linting process. Checks that all the required instructions exist in the Dockerfile.
+    * 
+    * @param dockerfileLintResult The {@link DockerfileLintResult} representing the Lint result being constructed.
+    * @param reqinst The {@link List} representing the "required_instructions" section of rule file.
+    * @param requiredInstructions, representing the Dockerfile Command name as the key and the number of command
+    *           occurrences required by the lint file as values.
+    */
    private void checkRequiredInstructions(Map<String, Integer> requiredInstructions,
             DockerfileLintResult dockerfileLintResult,
             List<Object> reqinst)
@@ -269,6 +294,16 @@ public class DockerfileLinter
 
    }
 
+   /**
+    * Validate and add messages defined in YAML rule file to the {@link DockerfileLintResult} based on the problem found
+    * in the linting process for individual Dockerfile instruction.
+    * 
+    * @param dockerfileLintResult The {@link DockerfileLintResult} representing the Lint result being constructed.
+    * @param instructionRules The {@link List} representing the "rules" section of the YAML file.
+    * @param instruction The {@link String} representing the current Dockerfile instruction.
+    * @param currentLine The {@link String} representing the current Dockerfile line.
+    * @param currentLineIndex The {@link Integer} representing the index of the current Dockerfile line.
+    */
    private void checkLineRules(String instruction, String currentLine, List<Object> instructionRules,
             DockerfileLintResult dockerfileLintResult,
             int currentLineIndex)
@@ -309,6 +344,13 @@ public class DockerfileLinter
 
    }
 
+   /**
+    * Return the {@link Map} ,which represents the merged rules of the rule file and the based rule file.
+    * 
+    * @param ruleFileObject The {@link Map} representing the rules in YAML rule file used to lint against.
+    * @param baseFileObject The {@link Map} representing the rules in YAML base rule file used to lint against.
+    * @return Map containing rule names as keys and the corresponding regexes as values.
+    */
    @SuppressWarnings("unchecked")
    private Map<String, Object> getCombinedRules(Map<String, Object> ruleFileObject,
             Map<String, Object> baseRuleFileObject)
@@ -383,6 +425,49 @@ public class DockerfileLinter
       this.baseRuleFile = baseRuleFile;
    }
 
+   /**
+    * Return the {@link FileResource} ,for the base rule file.
+    * 
+    * @return The Base Rule file FileResource containing basic set of lint rules for Dockerfiles.
+    */
+   @SuppressWarnings("unchecked")
+   public FileResource<?> getBaseRules()
+   {
+      InputStream ist = getClass().getResourceAsStream("base_rules.yaml");
+      File file = null;
+      try
+      {
+         file = File.createTempFile("fileresourcetest", ".yaml");
+      }
+      catch (IOException e1)
+      {
+      }
+      file.deleteOnExit();
+      FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
+      fileResource.setContents(ist);
+      try
+      {
+         ist.close();
+      }
+      catch (IOException e)
+      {
+      }
+      return fileResource;
+   }
+
+   /**
+    * Add messages defined in YAML rule file to the {@link DockerfileLintResult} based on the problem found in the
+    * linting process.
+    * 
+    * @param dockerfileLintResult The {@link DockerfileLintResult} representing the Lint result being constructed.
+    * @param type The {@link String} representing the type of problem found in the linting process.
+    * @param message The {@link String} representing the message corresponding to type of problem found in the linting
+    *           process.
+    * @param line The {@link String} representing the statement in the Dockerfile where the problem was found in the
+    *           linting process.
+    * @param lineNumber The {@link Integer} representing the line number of the statement in the Dockerfile where the
+    *           problem was found in the linting process.
+    */
    private void addLintResult(DockerfileLintResult dockerfileLintResult, String type, String message,
             String line, Integer lineNumber)
    {
@@ -404,6 +489,15 @@ public class DockerfileLinter
       }
    }
 
+   /**
+    * Add messages defined in YAML rule file to the {@link DockerfileLintResult} based on the problem found in the
+    * linting process.
+    * 
+    * @param dockerfileLintResult The {@link DockerfileLintResult} representing the Lint result being constructed.
+    * @param type The {@link String} representing the type of problem found in the linting process.
+    * @param message The {@link String} representing the message corresponding to type of problem found in the linting
+    *           process.
+    */
    private void addLintResult(DockerfileLintResult dockerfileLintResult, String type, String message)
    {
       addLintResult(dockerfileLintResult, type, message, "", -1);
