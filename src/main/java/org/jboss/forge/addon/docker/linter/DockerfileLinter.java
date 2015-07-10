@@ -1,6 +1,5 @@
 package org.jboss.forge.addon.docker.linter;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -15,13 +14,14 @@ import org.jboss.forge.addon.docker.resource.DockerFileResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.URLResource;
 import org.yaml.snakeyaml.Yaml;
 
 public class DockerfileLinter
 {
    private ResourceFactory resourceFactory;
 
-   private FileResource<?> baseRuleFile = null;
+   private Resource<?> baseRuleFile = null;
 
    public DockerfileLinter(ResourceFactory resourceFactory)
    {
@@ -129,18 +129,22 @@ public class DockerfileLinter
             continue;
          }
          // ignore if "ignoreRegex" matches the current line.
-         if (ignoreRegex != null && testRegex(ignoreRegex, currentLine))
+         if (ignoreRegex != null)
          {
-            continue;
+            if (currentLine.matches(ignoreRegex))
+               continue;
          }
 
          // join multiple lines into one using the "multiLineRegex" match on the current line.
-         while (multiLineRegex != null && testRegex(multiLineRegex, currentLine))
+         if (multiLineRegex != null)
          {
-            currentLine = currentLine.replaceFirst(multiLineRegex, " ");
-            currentLine += i.next();
-            i.remove();
-            currentLineIndex++;
+            while (currentLine.matches(multiLineRegex))
+            {
+               currentLine = currentLine.replaceFirst(multiLineRegex, " ");
+               currentLine += i.next();
+               i.remove();
+               currentLineIndex++;
+            }
          }
 
          // Check if the presence the required "FROM" instruction has been checked.
@@ -157,17 +161,23 @@ public class DockerfileLinter
          }
 
          // Add error if the current line does not contain the "instructionRegex" defined in the rule file.
-         if (instructionRegex != null && !testRegex(instructionRegex, currentLine))
+         if (instructionRegex != null)
          {
-            dockerfileLintResult.addError("Not a Instruction", currentLine, currentLineIndex);
-            continue;
+            if (!currentLine.matches(instructionRegex))
+            {
+               dockerfileLintResult.addError("Not a Instruction", currentLine, currentLineIndex);
+               continue;
+            }
          }
 
          // Add error if the current line does not contain a Valid Instruction.
-         if (validInstructionRegex != null && !testRegex(validInstructionRegex, currentLine))
+         if (validInstructionRegex != null)
          {
-            dockerfileLintResult.addError("Not a Valid Instruction", currentLine, currentLineIndex);
-            continue;
+            if (!Pattern.compile(validInstructionRegex).matcher(currentLine).find())
+            {
+               dockerfileLintResult.addError("Not a Valid Instruction", currentLine, currentLineIndex);
+               continue;
+            }
          }
 
          String instruction = null;
@@ -205,10 +215,13 @@ public class DockerfileLinter
          String parameters = currentLine.substring(matcher.end());
 
          // check the parameter rules for the instruction found by matching the "paramSyntaxRegex" to the parameter.
-         if (parameterSyntaxRegex != null && !testRegex(parameterSyntaxRegex, parameters))
+         if (parameterSyntaxRegex != null)
          {
-            dockerfileLintResult.addError("Bad Parameters", currentLine, currentLineIndex);
-            continue;
+            if (!parameters.matches(parameterSyntaxRegex))
+            {
+               dockerfileLintResult.addError("Bad Parameters", currentLine, currentLineIndex);
+               continue;
+            }
          }
       }
 
@@ -216,19 +229,6 @@ public class DockerfileLinter
       checkRequiredInstructions(requiredInstructions, dockerfileLintResult, reqinst);
 
       return dockerfileLintResult;
-   }
-
-   /**
-    * Return the {@link boolean} ,returns true if the source matches the regex.
-    * 
-    * @param regex The {@link String} representing the Regular Expression.
-    * @param source The {@link String} representing the source text.
-    * @return Boolean result of the pattern match.
-    */
-   private boolean testRegex(String regex, String source)
-   {
-      return (Pattern.compile(regex).matcher(source).find());
-
    }
 
    /**
@@ -325,13 +325,13 @@ public class DockerfileLinter
 
             if (rule.containsKey("regex"))
             {
-               if (testRegex(rule.get("regex"), currentLine) && !invr)
+               if (currentLine.matches(rule.get("regex")) && !invr)
                {
                   addLintResult(dockerfileLintResult, rule.get("level"), rule.get("message"), currentLine,
                            currentLineIndex);
                }
 
-               if (!testRegex(rule.get("regex"), currentLine) && invr)
+               if (!currentLine.matches(rule.get("regex")) && invr)
                {
                   addLintResult(dockerfileLintResult, rule.get("level"), rule.get("message"), currentLine,
                            currentLineIndex);
@@ -430,29 +430,10 @@ public class DockerfileLinter
     * 
     * @return The Base Rule file FileResource containing basic set of lint rules for Dockerfiles.
     */
-   @SuppressWarnings("unchecked")
-   public FileResource<?> getBaseRules()
+
+   public Resource<?> getBaseRules()
    {
-      InputStream ist = getClass().getResourceAsStream("base_rules.yaml");
-      File file = null;
-      try
-      {
-         file = File.createTempFile("fileresourcetest", ".yaml");
-      }
-      catch (IOException e1)
-      {
-      }
-      file.deleteOnExit();
-      FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
-      fileResource.setContents(ist);
-      try
-      {
-         ist.close();
-      }
-      catch (IOException e)
-      {
-      }
-      return fileResource;
+      return resourceFactory.create(URLResource.class, getClass().getResource("base_rules.yaml"));
    }
 
    /**
