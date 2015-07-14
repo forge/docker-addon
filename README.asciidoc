@@ -43,12 +43,12 @@ DockerDescriptor resourceDescriptor = resource.getDockerDescriptor();
 * Facets implementation:
 Docker addon adds a `DockerFacet` which is entry point for Docker addon API.
 
-* Dockerfile Setup Command:
+* Dockerfile Create Command:
 This command prepares the project for functioning in Docker context.
 +
 [source,shell]
 ----
-dockerfile-setup
+dockerfile-create
 ----
 +
 It installs the `DockerFacet` in your new project.

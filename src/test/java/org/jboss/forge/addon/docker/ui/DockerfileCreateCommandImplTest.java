@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class DockerfileSetupCommandTest
+public class DockerfileCreateCommandImplTest
 {
    @Deployment
    @AddonDependencies
@@ -46,7 +46,7 @@ public class DockerfileSetupCommandTest
    @Test
    public void testDockerfileSetup() throws Exception
    {
-      try (CommandController commandController = testHarness.createCommandController(DockerfileSetupCommandImpl.class,
+      try (CommandController commandController = testHarness.createCommandController(DockerfileCreateCommandImpl.class,
                project.getRoot()))
       {
          commandController.initialize();
@@ -59,7 +59,7 @@ public class DockerfileSetupCommandTest
    @Test
    public void testDockerfileSetupCalledTwice() throws Exception
    {
-      try (CommandController commandController = testHarness.createCommandController(DockerfileSetupCommandImpl.class,
+      try (CommandController commandController = testHarness.createCommandController(DockerfileCreateCommandImpl.class,
                project.getRoot()))
       {
          commandController.initialize();
@@ -67,7 +67,7 @@ public class DockerfileSetupCommandTest
       }
       Assert.assertTrue(project.getRoot().reify(DirectoryResource.class).getChild("Dockerfile").exists());
 
-      try (CommandController commandController = testHarness.createCommandController(DockerfileSetupCommandImpl.class,
+      try (CommandController commandController = testHarness.createCommandController(DockerfileCreateCommandImpl.class,
                project.getRoot()))
       {
          commandController.initialize();
