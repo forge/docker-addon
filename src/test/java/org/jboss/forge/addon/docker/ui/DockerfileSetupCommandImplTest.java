@@ -91,7 +91,7 @@ public class DockerfileSetupCommandImplTest
          Assert.assertEquals("Done! Dockerfile content created successfully.", result.getMessage());
          Assert.assertEquals("#Dockerfile for your project\n" +
                   "FROM jboss/wildfly\n" +
-                  "COPY target/docker-addon-test-war.war /opt/wildfly/standalone/deployments/",
+                  "ADD target/docker-addon-test-war.war /opt/wildfly/standalone/deployments/",
                   dockerfileResource.getContents());
 
          Assert.assertTrue(project.getRoot().reify(DirectoryResource.class).getChildDirectory(

@@ -2,6 +2,7 @@ package org.jboss.forge.addon.docker.ui;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -20,6 +21,8 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.shrinkwrap.descriptor.api.docker.DockerDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.docker.instruction.AddInstruction;
 
 public class DockerfileSetupCommandImpl extends AbstractProjectCommand implements DockerfileCreateCommand
 {
@@ -52,24 +55,23 @@ public class DockerfileSetupCommandImpl extends AbstractProjectCommand implement
       {
          DockerFacet df = getSelectedProject(context.getUIContext()).getFacet(DockerFacet.class);
          DockerFileResource dfr = df.getDockerfileResource();
+         DockerDescriptor dd = dfr.getDockerDescriptor();
 
-         StringBuilder sb = new StringBuilder(dfr.getContents());
+         dd.from("jboss/wildfly");
+         boolean flag = false;
+         List<AddInstruction> addIns = dd.getAllAdd();
+         for (AddInstruction instruction : addIns)
+            if (instruction.getSource().equals("COPY target/" + finalArtifact.getName())
+                     && instruction.getDestination().equals("/opt/wildfly/standalone/deployments/"))
+               flag = true;
 
-         if (!(sb.toString().contains("FROM jboss/wildfly")))
+         if (!flag)
          {
-            sb.append("\n");
-            sb.append("FROM jboss/wildfly");
-
+            dd.add("target/" + finalArtifact.getName(), "/opt/wildfly/standalone/deployments/");
          }
 
-         if (!(sb.toString().contains(
-                  "COPY target/" + finalArtifact.getName() + " /opt/wildfly/standalone/deployments/")))
-         {
-            sb.append("\n");
-            sb.append("COPY target/" + finalArtifact.getName() + " /opt/wildfly/standalone/deployments/");
-         }
+         dfr.setContents(dd);
 
-         dfr.setContents(sb.toString());
          return Results.success("Done! Dockerfile content created successfully.");
       }
 
