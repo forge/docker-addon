@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.CommitCmd;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
@@ -500,5 +501,15 @@ public interface DockerContainerUtils
    public abstract Statistics stats(final DockerClient dockerClient, String containerId)
             throws InterruptedException,
             IOException;
+
+   /**
+    * 
+    * Create a new image from a container's changes. Returns the new image ID.
+    * 
+    * @param dockerClient A docker-java API handle for managing Docker related tasks.
+    * @param containerId Docker Container ID.
+    * @return
+    */
+   CommitCmd commitCmd(final DockerClient dockerClient, String containerId);
 
 }
