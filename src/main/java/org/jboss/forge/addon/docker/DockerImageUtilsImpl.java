@@ -27,16 +27,16 @@ public class DockerImageUtilsImpl implements DockerImageUtils
 {
 
    @Override
-   public PullResponseItem pullImage(DockerClient dc, String repository) throws Exception
+   public PullResponseItem pullImage(final DockerClient dockerClient, String repository) throws Exception
    {
-      return pullImage(dc, repository, null, null, null);
+      return pullImage(dockerClient, repository, null, null, null);
    }
 
    @Override
-   public PullResponseItem pullImage(DockerClient dc, String repository, String tag, String registry,
+   public PullResponseItem pullImage(final DockerClient dockerClient, String repository, String tag, String registry,
             AuthConfig authConfig) throws Exception
    {
-      PullImageCmd pullImageCmd = dc.pullImageCmd(repository);
+      PullImageCmd pullImageCmd = dockerClient.pullImageCmd(repository);
       if (authConfig != null)
          pullImageCmd.withAuthConfig(authConfig);
       if (registry != null)
@@ -50,15 +50,15 @@ public class DockerImageUtilsImpl implements DockerImageUtils
    }
 
    @Override
-   public PushResponseItem pushImage(DockerClient dc, String name) throws Exception
+   public PushResponseItem pushImage(final DockerClient dockerClient, String name) throws Exception
    {
-      return pushImage(dc, name, null, null);
+      return pushImage(dockerClient, name, null, null);
    }
 
    @Override
-   public PushResponseItem pushImage(DockerClient dc, String name, String tag, AuthConfig authConfig) throws Exception
+   public PushResponseItem pushImage(final DockerClient dockerClient, String name, String tag, AuthConfig authConfig) throws Exception
    {
-      PushImageCmd pushImageCmd = dc.pushImageCmd(name);
+      PushImageCmd pushImageCmd = dockerClient.pushImageCmd(name);
       if (authConfig != null)
          pushImageCmd.withAuthConfig(authConfig);
       pushImageCmd.withName(name);
@@ -70,15 +70,15 @@ public class DockerImageUtilsImpl implements DockerImageUtils
    }
 
    @Override
-   public CreateImageResponse createImage(DockerClient dc, String repository, InputStream imageStream)
+   public CreateImageResponse createImage(final DockerClient dockerClient, String repository, InputStream imageStream)
    {
-      return createImage(dc, repository, null, imageStream);
+      return createImage(dockerClient, repository, null, imageStream);
    }
 
    @Override
-   public CreateImageResponse createImage(DockerClient dc, String repository, String tag, InputStream imageStream)
+   public CreateImageResponse createImage(final DockerClient dockerClient, String repository, String tag, InputStream imageStream)
    {
-      CreateImageCmd createImageCmd = dc.createImageCmd(repository, imageStream);
+      CreateImageCmd createImageCmd = dockerClient.createImageCmd(repository, imageStream);
       createImageCmd.withImageStream(imageStream);
       createImageCmd.withRepository(repository);
       if (tag != null)
@@ -88,24 +88,24 @@ public class DockerImageUtilsImpl implements DockerImageUtils
    }
 
    @Override
-   public List<SearchItem> searchImages(DockerClient dc, String term)
+   public List<SearchItem> searchImages(final DockerClient dockerClient, String term)
    {
-      SearchImagesCmd searchImagesCmd = dc.searchImagesCmd(term);
+      SearchImagesCmd searchImagesCmd = dockerClient.searchImagesCmd(term);
       searchImagesCmd.withTerm(term);
       List<SearchItem> exec = searchImagesCmd.exec();
       return exec;
    }
 
    @Override
-   public void removeImage(DockerClient dc, String imageId)
+   public void removeImage(final DockerClient dockerClient, String imageId)
    {
-      removeImage(dc, imageId, false, false);
+      removeImage(dockerClient, imageId, false, false);
    }
 
    @Override
-   public void removeImage(DockerClient dc, String imageId, boolean force, boolean noPrune)
+   public void removeImage(final DockerClient dockerClient, String imageId, boolean force, boolean noPrune)
    {
-      RemoveImageCmd removeImageCmd = dc.removeImageCmd(imageId);
+      RemoveImageCmd removeImageCmd = dockerClient.removeImageCmd(imageId);
       removeImageCmd.withForce(force);
       removeImageCmd.withImageId(imageId);
       removeImageCmd.withNoPrune(noPrune);
@@ -113,15 +113,15 @@ public class DockerImageUtilsImpl implements DockerImageUtils
    }
 
    @Override
-   public List<Image> listImages(DockerClient dc)
+   public List<Image> listImages(final DockerClient dockerClient)
    {
-      return listImages(dc, false, null);
+      return listImages(dockerClient, false, null);
    }
 
    @Override
-   public List<Image> listImages(DockerClient dc, boolean showAll, String filters)
+   public List<Image> listImages(final DockerClient dockerClient, boolean showAll, String filters)
    {
-      ListImagesCmd listImagesCmd = dc.listImagesCmd();
+      ListImagesCmd listImagesCmd = dockerClient.listImagesCmd();
       if (filters != null)
          listImagesCmd.withFilters(filters);
       listImagesCmd.withShowAll(showAll);
@@ -130,24 +130,24 @@ public class DockerImageUtilsImpl implements DockerImageUtils
    }
 
    @Override
-   public InspectImageResponse inspectImage(DockerClient dc, String imageId)
+   public InspectImageResponse inspectImage(final DockerClient dockerClient, String imageId)
    {
-      InspectImageCmd inspectImageCmd = dc.inspectImageCmd(imageId);
+      InspectImageCmd inspectImageCmd = dockerClient.inspectImageCmd(imageId);
       inspectImageCmd.withImageId(imageId);
       InspectImageResponse exec = inspectImageCmd.exec();
       return exec;
    }
 
    @Override
-   public InputStream saveImage(DockerClient dc, String name)
+   public InputStream saveImage(final DockerClient dockerClient, String name)
    {
-      return saveImage(dc, name, null);
+      return saveImage(dockerClient, name, null);
    }
 
    @Override
-   public InputStream saveImage(DockerClient dc, String name, String tag)
+   public InputStream saveImage(final DockerClient dockerClient, String name, String tag)
    {
-      SaveImageCmd saveImageCmd = dc.saveImageCmd(name);
+      SaveImageCmd saveImageCmd = dockerClient.saveImageCmd(name);
       saveImageCmd.withName(name);
       if (tag != null)
          saveImageCmd.withTag(tag);
