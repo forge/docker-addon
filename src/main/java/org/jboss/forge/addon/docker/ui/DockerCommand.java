@@ -20,6 +20,14 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
+/**
+ * 
+ * DockerCommand supports running Docker CLI commands on the Forge CLI. Eg: "docker images" shows your Docker images on
+ * the Forge CLI just as it works on a usual CLI.
+ * 
+ * @author Devanshu
+ *
+ */
 public class DockerCommand extends AbstractUICommand
 {
 
@@ -92,10 +100,9 @@ public class DockerCommand extends AbstractUICommand
       }
 
       if (p.exitValue() != 0)
-         return Results.fail(output1.toString() + "\nExit Value:" + p.exitValue() + directory.getFullyQualifiedName()
-                  + "\n" + command);
+         return Results.fail(output1.toString() + "\nExit Value:" + p.exitValue());
 
-      return Results.success(output.toString() + directory.getFullyQualifiedName() + "\n" + command);
+      return Results.success(output.toString());
 
    }
 
