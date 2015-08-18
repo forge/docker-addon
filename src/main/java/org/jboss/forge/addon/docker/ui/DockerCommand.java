@@ -1,8 +1,8 @@
 package org.jboss.forge.addon.docker.ui;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -15,19 +15,13 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.util.Streams;
 
-/**
- * 
- * DockerCommand supports running Docker CLI commands on the Forge CLI. Eg: "docker images" shows your Docker images on
- * the Forge CLI just as it works on a usual CLI.
- * 
- * @author Devanshu
- *
- */
 public class DockerCommand extends AbstractUICommand
 {
 
@@ -57,7 +51,10 @@ public class DockerCommand extends AbstractUICommand
       FileResource<?> fr = (FileResource<?>) directory.reify(FileResource.class);
       File f = new File(fr.getFullyQualifiedName());
 
-      context.getUIContext();
+      UIContext uiContext = context.getUIContext();
+      final UIOutput output = uiContext.getProvider().getOutput();
+
+      Result result = null;
       StringBuilder sb = new StringBuilder();
 
       Iterable<String> value = arguments.getValue();
@@ -69,41 +66,43 @@ public class DockerCommand extends AbstractUICommand
          }
       }
 
-      StringBuffer output = new StringBuffer();
-      StringBuffer output1 = new StringBuffer();
-      Process p = null;
-
       String command = "docker " + sb.toString();
 
-      try
+      final Process process = Runtime.getRuntime().exec(command, null, f);
+
+      ExecutorService executor = Executors.newFixedThreadPool(2);
+
+      executor.submit(new Runnable()
       {
+         @Override
+         public void run()
+         {
+            Streams.write(process.getInputStream(), output.out());
+         }
+      });
 
-         p = Runtime.getRuntime().exec(command, null, f);
-         p.waitFor();
-         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-         BufferedReader stderrReader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-         String line = "";
-         while ((line = reader.readLine()) != null)
-            output.append(line + "\n");
-
-         while ((line = stderrReader.readLine()) != null)
-            output1.append(line + "\n");
-
-         reader.close();
-         stderrReader.close();
-
-      }
-      catch (Exception e)
+      executor.submit(new Runnable()
       {
-         e.printStackTrace();
+         @Override
+         public void run()
+         {
+            Streams.write(process.getErrorStream(), output.err());
+         }
+      });
+
+      executor.shutdown();
+
+      int returnCode = process.waitFor();
+
+      if (returnCode == 0)
+      {
+         result = Results.success();
       }
-
-      if (p.exitValue() != 0)
-         return Results.fail(output1.toString() + "\nExit Value:" + p.exitValue());
-
-      return Results.success(output.toString());
-
+      else
+      {
+         result = Results.fail("Error while executing docker command.");
+      }
+      return result;
    }
 
 }
