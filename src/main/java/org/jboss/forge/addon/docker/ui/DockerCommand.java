@@ -49,7 +49,7 @@ public class DockerCommand extends AbstractUICommand
       UISelection<Resource<?>> initialSelection = context.getUIContext().getInitialSelection();
       Resource<?> directory = initialSelection.get();
       FileResource<?> fr = (FileResource<?>) directory.reify(FileResource.class);
-      File f = new File(fr.getFullyQualifiedName());
+      File f = fr.getUnderlyingResourceObject();
 
       UIContext uiContext = context.getUIContext();
       final UIOutput output = uiContext.getProvider().getOutput();
