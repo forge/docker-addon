@@ -16,7 +16,7 @@ addon-install-from-git --url https://github.com/forge/docker-addon.git
 
 == Features
 * *Dockerfile Linter*: A rule based 'linter' for https://docs.docker.com/reference/builder/[Dockerfiles] .The linter rules can be used  to check file syntax as well as arbitrary semantic and best practice attributes determined by the rule file writer.
-Rule files are written in YAML. The rules are implemented using regular expressions, run on one instruction of the Dockerfile at a time.
+Rule files are written in YAML. The rules are implemented using regular expressions, run on one instruction of the Dockerfile at a time. Inspiration for the linter has been taken from https://github.com/projectatomic/dockerfile_lint[dockerfile_lint].
 
 
 * *Dockerfile Lint command*: 
